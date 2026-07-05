@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoVision | Система анализа оталькования</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <h1>GeoVision <span class="badge">Прототип</span></h1>
+        </div>
+        <div class="header-info">
+            <span id="model-status" class="status-online">Модель v1.0 (Стабильная версия)</span>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Секция загрузки -->
+        <section class="upload-section" id="upload-section">
+            <div class="drop-zone" id="drop-zone">
+                <h2>Загрузка панорамы шлифа</h2>
+                <p>Перетащите файл изображения в эту область или нажмите для выбора (JPG / PNG)</p>
+                <input type="file" id="file-input" accept="image/jpeg, image/png" hidden>
+            </div>
+            
+            <div class="loader-container" id="loader" style="display: none;">
+                <div class="spinner"></div>
+                <p class="loader-text">Выполняется сегментация и классификация панорамы...</p>
+                <span class="loader-subtext">Построение тепловой карты плотности, расчет распределения фаз</span>
+            </div>
+        </section>
+
+        <!-- Секция результатов -->
+        <section class="results-section" id="results-section" style="display: none;">
+            
+            <!-- Панель геологических данных -->
+            <aside class="analytics-panel">
+                <h3 class="panel-title">Аналитический отчет</h3>
+                
+                <div class="stat-card" id="final-class-card">
+                    <span class="stat-label">Результирующий сорт руды:</span>
+                    <strong class="stat-value" id="res-final-class">Оталькованная руда</strong>
+                </div>
+
+                <div class="stat-group">
+                    <div class="stat-item">
+                        <span class="stat-label">Относительное содержание талька:</span>
+                        <span class="stat-value accent-large" id="res-talc-ratio">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Текстурный класс матрицы:</span>
+                        <span class="stat-value" id="res-texture">Рядовая</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Достоверность прогноза:</span>
+                        <span class="stat-value" id="res-conf">98.5%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Время обработки:</span>
+                        <span class="stat-value" id="res-time">0.5 сек</span>
+                    </div>
+                </div>
+
+                <h3 class="panel-title mt-4">Технологические рекомендации</h3>
+                <div class="recommendation-box">
+                    <p><strong>Обогащение:</strong> <span id="res-rec">Режим реагентов...</span></p>
+                    <p class="mt-2"><strong>Дробление/Помол:</strong> <span id="res-grind">Схема измельчения...</span></p>
+                </div>
+                
+                <button class="btn-primary mt-4" id="btn-reset">Загрузить новый снимок</button>
+            </aside>
+
+            <!-- Панель визуализации данных -->
+            <div class="viewer-panel">
+                <div class="tabs">
+                    <button class="tab-btn active" data-target="img-orig">1. Исходное изображение</button>
+                    <button class="tab-btn" data-target="img-ore">2. Границы руды</button>
+                    <button class="tab-btn" data-target="img-talc">3. Выделение талька</button>
+                    <button class="tab-btn highlight-tab" data-target="img-heatmap">4. Тепловая карта</button>
+                    <button class="tab-btn" data-target="img-overlay">5. Финальное наложение</button>
+                    <button class="tab-btn ai-tab" data-target="editor-mode">Корректировка маски</button>
+                </div>
+
+                <!-- Панель редактора -->
+                <div class="editor-toolbar" id="editor-toolbar" style="display: none;">
+                    <div class="tools-group">
+                        <button class="tool-btn active" id="btn-brush">Кисть</button>
+                        <button class="tool-btn" id="btn-eraser">Ластик</button>
+                        <span class="slider-label">Диаметр кисти:</span>
+                        <input type="range" id="brush-size" min="5" max="100" value="20">
+                    </div>
+                    <div class="tools-group">
+                        <button class="tool-btn btn-save" id="btn-save-mask">Сохранить маску</button>
+                        <button class="tool-btn btn-retrain" id="btn-retrain">Запустить дообучение</button>
+                    </div>
+                </div>
+
+                <div class="image-container" id="image-container">
+                    <img id="img-orig" class="viewer-img active" src="" alt="Исходник">
+                    <img id="img-ore" class="viewer-img" src="" alt="Маска руды">
+                    <img id="img-talc" class="viewer-img" src="" alt="Маска талька">
+                    <img id="img-heatmap" class="viewer-img" src="" alt="Тепловая карта">
+                    <img id="img-overlay" class="viewer-img" src="" alt="Финальный оверлей">
+                    
+                    <canvas id="drawing-canvas" class="viewer-img"></canvas>
+                </div>
+                <div class="viewer-hint">Используйте вкладки для пошагового контроля работы алгоритма сегментации.</div>
+            </div>
+        </section>
+    </main>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
