@@ -13,6 +13,7 @@ import numpy as np
 from pathlib import Path
 import base64
 from backend.model_loader import model_manager, DEVICE
+from backend.inference import process_image
 
 app = FastAPI(title="GeoVision API Premium")
 
@@ -87,6 +88,10 @@ async def retrain_model():
         _, talc_mask = cv2.threshold(gray_mask, 10, 1, cv2.THRESH_BINARY)
         
         h, w = img.shape[:2]
+        
+        # Обеспечиваем точное совпадение размеров маски и оригинала (фронтенд может прислать другой размер)
+        if talc_mask.shape[:2] != (h, w):
+            talc_mask = cv2.resize(talc_mask, (w, h), interpolation=cv2.INTER_NEAREST)
         
         # Защита от мелких тестовых картинок
         if h < 512 or w < 512:
